@@ -29,32 +29,41 @@
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
 
-        // Иконки через SVG, чтобы не зависеть от внешних шрифтов
+        // Иконки через SVG
         const Icons = {
             Send: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>,
             Paperclip: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.51a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>,
             Check: () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>,
             Layout: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>,
-            X: () => <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            X: () => <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>,
+            Calculator: () => <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="16" y2="18"/></svg>,
+            ShoppingCart: () => <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
         };
 
-        const apiKey = ""; // Ключ API
-
         const MOCK_1C_DB = [
-            { id: 1, name: "Линолеум Версаль Сахалин 3м", price: 660, unit: "м²", stock: 45, warehouse: "Склад Энгельс", img: "https://images.unsplash.com/photo-1581850518616-bcb8186c443e?auto=format&fit=crop&q=80&w=600" },
-            { id: 2, name: "Ламинат Classen Дуб Светлый", price: 1250, unit: "м²", stock: 120, warehouse: "Маяковского, 157", img: "https://images.unsplash.com/photo-1516455590571-18256e5bb9ff?auto=format&fit=crop&q=80&w=600" },
-            { id: 3, name: "Краска Tikkurila Euro Power 7", price: 4200, unit: "9л", stock: 15, warehouse: "Центральный Склад", img: "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&q=80&w=600" },
-            { id: 4, name: "Плитка керамогранит Loft Grey", price: 1890, unit: "м²", stock: 88, warehouse: "Склад Энгельс", img: "https://images.unsplash.com/photo-1523413555809-0fb8a4da203d?auto=format&fit=crop&q=80&w=600" }
+            { id: 1, name: "Линолеум Версаль Сахалин 3м", price: 660, unit: "м²", stock: 45, warehouse: "Склад Энгельс", img: "https://images.unsplash.com/photo-1581850518616-bcb8186c443e?auto=format&fit=crop&q=80&w=600", category: "линолеум" },
+            { id: 2, name: "Ламинат Classen Дуб Светлый", price: 1250, unit: "м²", stock: 120, warehouse: "Маяковского, 157", img: "https://images.unsplash.com/photo-1516455590571-18256e5bb9ff?auto=format&fit=crop&q=80&w=600", category: "ламинат" },
+            { id: 3, name: "Краска Tikkurila Euro Power 7", price: 4200, unit: "9л", stock: 15, warehouse: "Центральный Склад", img: "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&q=80&w=600", category: "краска" },
+            { id: 4, name: "Плитка керамогранит Loft Grey", price: 1890, unit: "м²", stock: 88, warehouse: "Склад Энгельс", img: "https://images.unsplash.com/photo-1523413555809-0fb8a4da203d?auto=format&fit=crop&q=80&w=600", category: "плитка" }
+        ];
+
+        const QUICK_QUERIES = [
+            { id: 'tile', label: 'Плитка', icon: '🧱' },
+            { id: 'linoleum', label: 'Линолеум', icon: '📜' },
+            { id: 'laminate', label: 'Ламинат', icon: '🪵' },
+            { id: 'calc', label: 'Рассчитай стоимость', icon: '🧮' },
+            { id: 'paint', label: 'Краска', icon: '🎨' }
         ];
 
         function App() {
-            const [messages, setMessages] = useState([{ role: 'bot', text: 'Здравствуйте! Я ИИ-ассистент Стройдвора. Загрузите фото или опишите ваш проект.' }]);
+            const [messages, setMessages] = useState([{ role: 'bot', text: 'Здравствуйте! Я ИИ-ассистент Стройдвора. Могу помочь подобрать материалы или рассчитать их количество. Что вас интересует?' }]);
             const [input, setInput] = useState('');
             const [loading, setLoading] = useState(false);
             const [loadingPhase, setLoadingPhase] = useState('');
             const [activeVisual, setActiveVisual] = useState(null);
             const [activeProduct, setActiveProduct] = useState(null);
             const [previewImage, setPreviewImage] = useState(null);
+            const [cartCount, setCartCount] = useState(0);
             const chatEndRef = useRef(null);
 
             const scrollToBottom = () => chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -69,21 +78,38 @@
                 setPreviewImage(null);
                 setLoading(true);
 
-                // Имитация процесса
-                setLoadingPhase("Анализ данных 1С...");
+                setLoadingPhase("Синхронизация с 1С...");
+                
                 setTimeout(() => {
                     const lowerText = text.toLowerCase();
-                    const product = MOCK_1C_DB.find(p => lowerText.includes(p.name.split(' ')[0].toLowerCase()) || lowerText.includes("линолеум") && p.name.includes("Линолеум"));
+                    let responseText = "Я проанализировал ваш запрос. Вот подходящий вариант из нашего каталога:";
+                    let foundProduct = null;
+
+                    if (lowerText.includes("плитк")) foundProduct = MOCK_1C_DB.find(p => p.category === "плитка");
+                    else if (lowerText.includes("линолеум")) foundProduct = MOCK_1C_DB.find(p => p.category === "линолеум");
+                    else if (lowerText.includes("ламинат")) foundProduct = MOCK_1C_DB.find(p => p.category === "ламинат");
+                    else if (lowerText.includes("краск")) foundProduct = MOCK_1C_DB.find(p => p.category === "краска");
+                    else if (lowerText.includes("рассчитай") || lowerText.includes("стоимост")) {
+                        responseText = "Для точного расчета стоимости мне нужно знать площадь помещения. Но если мы возьмем среднюю комнату 20 м², то отделка качественным ламинатом обойдется примерно в 25 000 руб.";
+                    } else {
+                        responseText = "Интересный выбор! Я подобрал для вас несколько популярных позиций, которые сейчас есть в наличии на складе.";
+                    }
                     
                     setMessages(prev => [...prev, { 
                         role: 'bot', 
-                        text: product ? `Отличный выбор! Модель "${product.name}" идеально подойдет. У нас как раз есть в наличии на складе.` : "Я подготовил для вас визуализацию и подобрал лучшие материалы из нашего каталога." 
+                        text: responseText
                     }]);
                     
-                    if (product) setActiveProduct(product);
+                    if (foundProduct) setActiveProduct(foundProduct);
                     setLoading(false);
                     setLoadingPhase("");
-                }, 1500);
+                }, 1200);
+            };
+
+            const addToCart = () => {
+                setCartCount(prev => prev + 1);
+                // Имитация уведомления
+                setMessages(prev => [...prev, { role: 'bot', text: `Товар "${activeProduct.name}" успешно добавлен в вашу корзину!` }]);
             };
 
             const handleFile = (e) => {
@@ -97,17 +123,25 @@
 
             return (
                 <div className="w-full min-h-screen flex items-center justify-center p-4 lg:p-8">
-                    <div className="w-full max-w-7xl h-[700px] bg-white rounded-[40px] shadow-2xl overflow-hidden flex flex-col lg:flex-row border border-slate-200">
+                    <div className="w-full max-w-7xl h-[750px] bg-white rounded-[40px] shadow-2xl overflow-hidden flex flex-col lg:flex-row border border-slate-200">
                         
                         {/* ЛЕВАЯ ПАНЕЛЬ: ЧАТ */}
-                        <div className="w-full lg:w-[400px] border-r border-slate-100 flex flex-col bg-white shrink-0">
+                        <div className="w-full lg:w-[420px] border-r border-slate-100 flex flex-col bg-white shrink-0">
                             <div className="p-6 border-b bg-[#00569c] text-white flex items-center justify-between">
                                 <div className="flex items-center gap-3">
                                     <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-[#00569c] font-black shadow-lg">СД</div>
                                     <div>
                                         <h3 className="font-bold text-sm leading-none">ИИ-Помощник</h3>
-                                        <span className="text-[10px] opacity-70 uppercase tracking-widest mt-1 block">Live Support</span>
+                                        <span className="text-[10px] opacity-70 uppercase tracking-widest mt-1 block">База данных онлайн</span>
                                     </div>
+                                </div>
+                                <div className="relative">
+                                    <Icons.ShoppingCart />
+                                    {cartCount > 0 && (
+                                        <span className="absolute -top-2 -right-2 bg-[#f39200] text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center animate-bounce">
+                                            {cartCount}
+                                        </span>
+                                    )}
                                 </div>
                             </div>
 
@@ -131,6 +165,19 @@
                                 <div ref={chatEndRef} />
                             </div>
 
+                            {/* Блок быстрых запросов */}
+                            <div className="px-4 py-3 bg-white border-t border-slate-50 flex flex-wrap gap-2">
+                                {QUICK_QUERIES.map(q => (
+                                    <button 
+                                        key={q.id}
+                                        onClick={() => handleSend(q.label)}
+                                        className="px-3 py-1.5 bg-slate-100 hover:bg-[#00569c] hover:text-white rounded-full text-[11px] font-semibold text-slate-600 transition-all flex items-center gap-1.5 active:scale-95"
+                                    >
+                                        <span>{q.icon}</span> {q.label}
+                                    </button>
+                                ))}
+                            </div>
+
                             <div className="p-4 border-t bg-white">
                                 {previewImage && (
                                     <div className="mb-2 relative inline-block">
@@ -143,7 +190,7 @@
                                         <Icons.Paperclip />
                                         <input type="file" className="hidden" accept="image/*" onChange={handleFile} />
                                     </label>
-                                    <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleSend()} placeholder="Ваш вопрос..." className="flex-1 bg-transparent border-none text-sm outline-none px-2" />
+                                    <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleSend()} placeholder="Напишите ваш запрос..." className="flex-1 bg-transparent border-none text-sm outline-none px-2" />
                                     <button onClick={() => handleSend()} className="bg-[#00569c] text-white p-3 rounded-xl hover:scale-105 active:scale-95 transition-all">
                                         <Icons.Send />
                                     </button>
@@ -156,52 +203,91 @@
                             <div className="flex items-center justify-between mb-8">
                                 <div className="flex items-center gap-4">
                                     <div className="bg-white p-3 rounded-2xl shadow-sm text-[#00569c]"><Icons.Layout /></div>
-                                    <h2 className="text-2xl font-black text-slate-800 tracking-tight">Рабочая область проекта</h2>
+                                    <h2 className="text-2xl font-black text-slate-800 tracking-tight uppercase">Витрина и Проект</h2>
                                 </div>
-                                <div className="px-4 py-2 bg-white rounded-full text-[11px] font-bold text-slate-400 border border-slate-200 uppercase tracking-widest shadow-sm">
-                                    Status: Connected to 1C
+                                <div className="hidden lg:flex gap-4">
+                                    <div className="px-4 py-2 bg-white rounded-full text-[11px] font-bold text-slate-400 border border-slate-200 uppercase tracking-widest shadow-sm flex items-center gap-2">
+                                        <span className="w-2 h-2 bg-green-500 rounded-full"></span> 1С: Соединение установлено
+                                    </div>
                                 </div>
                             </div>
 
-                            <div className="flex-1 grid grid-cols-12 gap-6 overflow-hidden">
-                                <div className="col-span-12 lg:col-span-8 bg-white rounded-[32px] shadow-sm border border-slate-100 overflow-hidden relative group">
+                            <div className="flex-1 grid grid-cols-12 gap-8 overflow-hidden">
+                                {/* Область проекта */}
+                                <div className="col-span-12 lg:col-span-7 bg-white rounded-[40px] shadow-sm border border-slate-100 overflow-hidden relative group">
                                     {activeVisual ? (
                                         <img src={activeVisual} className="w-full h-full object-cover" />
                                     ) : (
-                                        <div className="h-full flex flex-col items-center justify-center text-center p-12 space-y-4">
-                                            <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center animate-float border-2 border-dashed border-slate-200">
-                                                <Icons.Layout className="text-slate-300" />
+                                        <div className="h-full flex flex-col items-center justify-center text-center p-12 space-y-6">
+                                            <div className="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center animate-float border-2 border-dashed border-slate-200">
+                                                <Icons.Layout className="text-slate-200" size={48} />
                                             </div>
                                             <div>
-                                                <h4 className="font-bold text-slate-600">Здесь появится ваш проект</h4>
-                                                <p className="text-xs text-slate-400 max-w-xs mt-2">Загрузите фото комнаты или опишите интерьер в чате, и я создам визуализацию.</p>
+                                                <h4 className="font-black text-slate-700 text-lg uppercase">Ваш дизайн-проект</h4>
+                                                <p className="text-xs text-slate-400 max-w-xs mt-3 leading-relaxed">
+                                                    Загрузите фото комнаты, и наш ИИ предложит варианты отделки прямо на вашем фото или создаст 3D визуализацию.
+                                                </p>
                                             </div>
+                                            <button className="px-6 py-3 bg-[#00569c] text-white rounded-2xl text-[11px] font-black uppercase tracking-widest shadow-lg shadow-blue-100 hover:bg-[#004a87] transition-all">
+                                                Начать проектирование
+                                            </button>
                                         </div>
                                     )}
                                 </div>
 
-                                <div className="col-span-12 lg:col-span-4 flex flex-col gap-4">
+                                {/* Карточка товара */}
+                                <div className="col-span-12 lg:col-span-5 flex flex-col gap-6">
                                     {activeProduct ? (
-                                        <div className="bg-white rounded-[32px] p-6 shadow-xl border border-blue-50 flex flex-col animate-in slide-in-from-right-10 duration-500">
-                                            <span className="text-[10px] font-black text-[#f39200] uppercase tracking-[0.2em] mb-4">Рекомендация ИИ</span>
-                                            <img src={activeProduct.img} className="w-full h-40 object-cover rounded-2xl mb-4" />
-                                            <h3 className="font-bold text-slate-800 text-lg mb-1">{activeProduct.name}</h3>
-                                            <div className="text-2xl font-black text-[#00569c] mb-6">{activeProduct.price} ₽ <span className="text-xs font-normal text-slate-400">/ {activeProduct.unit}</span></div>
-                                            
-                                            <div className="bg-green-50 p-3 rounded-xl border border-green-100 mb-6">
-                                                <div className="flex items-center gap-2 text-green-700 text-xs font-bold uppercase tracking-wider">
+                                        <div className="bg-white rounded-[40px] p-8 shadow-2xl border border-blue-50 flex flex-col animate-in slide-in-from-right-20 duration-500 h-full">
+                                            <div className="flex justify-between items-start mb-6">
+                                                <span className="text-[10px] font-black text-[#f39200] bg-orange-50 px-3 py-1 rounded-full uppercase tracking-wider">Выбор ИИ</span>
+                                                <div className="flex items-center gap-1 text-[10px] text-green-600 font-bold uppercase">
                                                     <Icons.Check /> В наличии
                                                 </div>
-                                                <div className="text-[10px] text-green-600/70 mt-1">{activeProduct.warehouse}</div>
+                                            </div>
+                                            
+                                            <div className="relative group overflow-hidden rounded-3xl mb-6">
+                                                <img src={activeProduct.img} className="w-full h-52 object-cover group-hover:scale-110 transition-transform duration-700" />
+                                            </div>
+                                            
+                                            <div className="flex-1">
+                                                <h3 className="font-black text-slate-800 text-xl mb-2 leading-tight">{activeProduct.name}</h3>
+                                                <p className="text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-4">Артикул: SD-{activeProduct.id}00342</p>
+                                                
+                                                <div className="flex items-baseline gap-2 mb-6">
+                                                    <span className="text-4xl font-black text-[#00569c] tracking-tighter">{activeProduct.price} ₽</span>
+                                                    <span className="text-sm font-bold text-slate-400 italic">за {activeProduct.unit}</span>
+                                                </div>
+
+                                                <div className="space-y-3 mb-8">
+                                                    <div className="flex items-center justify-between text-xs p-3 bg-slate-50 rounded-2xl border border-slate-100">
+                                                        <span className="text-slate-500 font-medium uppercase tracking-tighter">Склад</span>
+                                                        <span className="font-black text-slate-700">{activeProduct.warehouse}</span>
+                                                    </div>
+                                                </div>
                                             </div>
 
-                                            <button className="w-full bg-[#f39200] text-white py-4 rounded-2xl font-black shadow-lg shadow-orange-100 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2">
-                                                В КОРЗИНУ
-                                            </button>
+                                            <div className="flex flex-col gap-3">
+                                                <button 
+                                                    onClick={addToCart}
+                                                    className="w-full bg-[#f39200] text-white py-5 rounded-3xl font-black shadow-xl shadow-orange-100 hover:scale-[1.03] active:scale-95 transition-all flex items-center justify-center gap-3 uppercase tracking-widest text-sm"
+                                                >
+                                                    <Icons.ShoppingCart /> В КОРЗИНУ
+                                                </button>
+                                                <button className="w-full py-2 text-[10px] text-slate-300 font-bold uppercase hover:text-[#00569c] transition-colors">
+                                                    Посмотреть характеристики
+                                                </button>
+                                            </div>
                                         </div>
                                     ) : (
-                                        <div className="flex-1 bg-slate-100/50 rounded-[32px] border-2 border-dashed border-slate-200 p-8 flex flex-col items-center justify-center text-center">
-                                            <div className="text-slate-300 text-[10px] font-bold uppercase tracking-widest">Подбор материалов</div>
+                                        <div className="flex-1 bg-white/50 rounded-[40px] border-2 border-dashed border-slate-200 p-8 flex flex-col items-center justify-center text-center">
+                                            <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4">
+                                                <Icons.ShoppingCart className="text-slate-300" />
+                                            </div>
+                                            <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Ваша подборка</h5>
+                                            <p className="text-[11px] text-slate-400 mt-3 leading-relaxed">
+                                                Нажмите на быстрый запрос слева или опишите задачу, чтобы увидеть товары из актуальной базы 1С
+                                            </p>
                                         </div>
                                     )}
                                 </div>
